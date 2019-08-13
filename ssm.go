@@ -31,20 +31,20 @@ func retrieveEnv() (string, error) {
 
 // Creates an AWS session
 // Retrieves and decrypts a given parameter
-func retrieveParam(paramName string, getEnvOutput string) (*ssm.GetParameterOutput, error) {
+func retrieveParam(paramName string, getEnvOutput string) (*ssm.GetParametersOutput, error) {
 	ssmPath := getEnvOutput + paramName
 	sess := session.Must(session.NewSession())
 	svc := ssm.New(sess)
 	decrypt := true
-	out, err := svc.GetParameter(&ssm.GetParameterInput{
-		Name:           &ssmPath,
+	out, err := svc.GetParameters(&ssm.GetParametersInput{
+		Names:          []*string{&ssmPath},
 		WithDecryption: &decrypt})
 	return out, err
 }
 
 // return value from
-func getParamValue(paramOutput *ssm.GetParameterOutput) string {
-	return *paramOutput.Parameter.Value
+func getParamValue(paramOutput *ssm.GetParametersOutput) string {
+	return *paramOutput.Parameters[0].Value
 }
 
 // Return test param value
